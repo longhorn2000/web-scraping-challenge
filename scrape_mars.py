@@ -59,3 +59,26 @@ def scrape():
     
     # Convert table to html
     mars_facts_table = df.to_html(classes='data table', index=False, header=False, border=0)
+    
+    # --- Visit USGS Astrogeology Site ---
+    browser.visit('https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars')
+    
+    time.sleep(1)
+    
+    # Scrape page into Soup
+    html = browser.html
+    soup = bs(html, 'html.parser')
+
+    hemi_names = []
+    
+    # Search for the names of all four hemispheres
+    results = soup.find_all('div', class_="collapsible results")
+    hemispheres = results[0].find_all('h3')
+
+    # Get text and store in list
+    for name in hemispheres:
+        hemi_names.append(name.text)
+
+    # Search for thumbnail links
+    thumbnail_results = results[0].find_all('a')
+    thumbnail_links = []
