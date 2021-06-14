@@ -29,4 +29,33 @@ def scrape():
     p_results = soup.find_all('div', class_='article_teaser_body')
     news_p = p_results[0].text
 
+    # --- Visit JPL site for featured Mars image ---
+    browser.visit('https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars')
+
+    time.sleep(1)
+
+    # Click through to full image
+    browser.click_link_by_partial_text('FULL IMAGE')
+    time.sleep(2)
+    browser.click_link_by_partial_text('more info')
+
+    # Scrape page into Soup
+    html = browser.html
+    soup = bs(html, 'html.parser')
+
+    # Search for image source
+    results = soup.find_all('figure', class_='lede')
+    relative_img_path = results[0].a['href']
+    featured_img = 'https://www.jpl.nasa.gov' + relative_img_path
     
+    # --- Use Pandas to scrape Mars Space Facts ---
+    tables = pd.read_html('https://space-facts.com/mars/')
+
+    # Take second table for Mars facts
+    df = tables[1]
+
+    # Rename columns and set index
+    df.columns=['description', 'value']
+    
+    # Convert table to html
+    mars_facts_table = df.to_html(classes='data table', index=False, header=False, border=0)
