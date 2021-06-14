@@ -96,3 +96,57 @@ def scrape():
             thumbnail_links.append(thumbnail_url)
     
     full_imgs = []
+    
+    for url in thumbnail_links:
+        
+        # Click through each thumbanil link
+        browser.visit(url)
+        
+        html = browser.html
+        soup = bs(html, 'html.parser')
+        
+        # Scrape each page for the relative image path
+        results = soup.find_all('img', class_='wide-image')
+        relative_img_path = results[0]['src']
+        
+        # Combine the reltaive image path to get the full url
+        img_link = 'https://astrogeology.usgs.gov/' + relative_img_path
+        
+        # Add full image links to a list
+        full_imgs.append(img_link)
+
+    # Zip together the list of hemisphere names and hemisphere image links
+    mars_hemi_zip = zip(hemi_names, full_imgs)
+
+    hemisphere_image_urls = []
+    
+    # Iterate through the zipped object
+    for title, img in mars_hemi_zip:
+        
+        mars_hemi_dict = {}
+        
+        # Add hemisphere title to dictionary
+        mars_hemi_dict['title'] = title
+        
+        # Add image url to dictionary
+        mars_hemi_dict['img_url'] = img
+        
+        # Append the list with dictionaries
+        hemisphere_image_urls.append(mars_hemi_dict)
+    
+
+    # Store data in a dictionary
+    mars_data = {
+        "news_title": news_title,
+        "news_paragraph": news_p,
+        "featured_image": featured_img,
+        "weather": mars_weather,
+        "mars_facts": mars_facts_table,
+        "hemispheres": hemisphere_image_urls
+    }
+
+    # Close the browser after scraping
+    browser.quit()
+
+    # Return results
+    return mars_data
