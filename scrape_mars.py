@@ -82,3 +82,17 @@ def scrape():
     # Search for thumbnail links
     thumbnail_results = results[0].find_all('a')
     thumbnail_links = []
+    
+    # Iterate through thumbnail links for full-size image
+    for thumbnail in thumbnail_results:
+        
+        # If the thumbnail element has an image...
+        if (thumbnail.img):
+            
+            # then grab the attached link
+            thumbnail_url = 'https://astrogeology.usgs.gov/' + thumbnail['href']
+            
+            # Append list with links
+            thumbnail_links.append(thumbnail_url)
+    
+    full_imgs = []
