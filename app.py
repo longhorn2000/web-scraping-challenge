@@ -2,21 +2,41 @@
  "cells": [
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 15,
    "metadata": {},
    "outputs": [],
    "source": [
     "from flask import Flask, render_template, redirect\n",
     "from flask_pymongo import PyMongo\n",
-    "import scrape_mars\n",
-    "\n",
+    "import scrape_mars"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [],
+   "source": [
     "# Create an instance of Flask\n",
-    "app = Flask(__name__)\n",
-    "\n",
+    "app = Flask(__name__)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [],
+   "source": [
     "# Use PyMongo to establish Mongo connection\n",
-    "mongo = PyMongo(app, uri=\"mongodb://localhost:27017/mars_app\")\n",
-    "\n",
-    "\n",
+    "mongo = PyMongo(app, uri=\"mongodb://localhost:27017/mars_app\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {},
+   "outputs": [],
+   "source": [
     "# Route to render index.html template using data from Mongo\n",
     "@app.route(\"/\")\n",
     "def home():\n",
@@ -24,9 +44,15 @@
     "    # Find one record of data from the mongo database\n",
     "    destination_data = mongo.db.mars_data.find_one()\n",
     "    # Return template and data\n",
-    "    return render_template(\"index.html\", mission=destination_data)\n",
-    "\n",
-    "\n",
+    "    return render_template(\"index.html\", mission=destination_data)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {},
+   "outputs": [],
+   "source": [
     "# Route that will trigger the scrape function\n",
     "@app.route(\"/scrape\")\n",
     "def scrape():\n",
@@ -49,9 +75,16 @@
     "        'weather':weather_results,\n",
     "        'facts': facts_results,\n",
     "        'hemispheres': images_results\n",
-    "    }\n",
-    "\n",
-    "    # Update the Mongo database using update and upsert=True\n",
+    "    }"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Update the Mongo database using update and upsert=True\n",
     "\n",
     "    mongo.db.mars_data.update({},results,upsert=True)\n",
     "    # Redirect back to home page\n",
